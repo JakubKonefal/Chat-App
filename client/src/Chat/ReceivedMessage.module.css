@@ -1,0 +1,56 @@
+.Message {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+  position: relative;
+  width: 80%;
+  margin-right: auto;
+  box-sizing: border-box;
+  padding: 8px 16px 8px;
+  border-radius: 5px;
+  background-color: #abd;
+  word-wrap: break-word;
+  word-break: break-all;
+  margin-bottom: 16px;
+  z-index: 100;
+  cursor: pointer;
+}
+
+.Message:hover,
+.Message:hover .Message__Arrow {
+  background-color: rgb(133, 161, 218);
+}
+
+.Message__Username {
+  font-size: 14px;
+  font-weight: bold;
+  color: blue;
+  white-space: nowrap;
+}
+
+.Message__Content {
+  margin: 0;
+  font-size: 15px;
+  color: black;
+  z-index: 100;
+}
+
+.Message__Time {
+  width: 100%;
+  margin-top: 7px;
+  color: #000;
+  font-size: 11px;
+  text-align: right;
+}
+
+.Message__Arrow {
+  position: absolute;
+  top: 50%;
+  left: -7px;
+  width: 14px;
+  height: 14px;
+  background-color: #abd;
+  transform: translateY(-50%) rotate(45deg);
+  z-index: 10;
+}

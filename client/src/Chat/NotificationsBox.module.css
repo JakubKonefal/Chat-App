@@ -1,0 +1,51 @@
+.Notifications {
+  display: flex;
+  flex-direction: column;
+  border: 2px solid #8179cc;
+  height: 100%;
+}
+
+.Notifications__Title {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 50px;
+  margin: 0;
+  background-color: #8179cc;
+  color: #fff;
+  font-weight: 700;
+  letter-spacing: 1px;
+}
+
+.Notifications__RefreshIcon {
+  margin-left: 8px;
+  cursor: pointer;
+}
+
+.Notifications__Messages {
+  height: 100%;
+  background-color: #ddd;
+  overflow: auto;
+}
+
+.Notifications__Message {
+  padding: 8px;
+}
+
+.Notifications__Message_Connected {
+  margin: 0;
+  padding: 8px;
+  background-color: rgb(195, 246, 195);
+}
+
+.Notifications__Message_Disconnected {
+  margin: 0;
+  padding: 8px;
+  background-color: rgb(251, 155, 155);
+}
+
+.Notifications__Message_Username {
+  font-weight: 700;
+  color: black;
+  background-color: transparent;
+}

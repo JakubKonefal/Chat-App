@@ -1,0 +1,45 @@
+.Message {
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  width: 80%;
+  margin-left: auto;
+  box-sizing: border-box;
+  padding: 8px 16px 8px;
+  border-radius: 5px;
+  background-color: #bda;
+  word-break: break-all;
+  margin-bottom: 16px;
+  z-index: 100;
+  cursor: pointer;
+}
+
+.Message:hover,
+.Message:hover .Message__Arrow {
+  background-color: rgb(154, 216, 123);
+}
+
+.Message__Content {
+  margin: 0;
+  font-size: 15px;
+  color: black;
+  z-index: 100;
+}
+
+.Message__Time {
+  margin-top: 7px;
+  color: #000;
+  font-size: 11px;
+  text-align: right;
+}
+
+.Message__Arrow {
+  position: absolute;
+  top: 50%;
+  right: -7px;
+  width: 14px;
+  height: 14px;
+  background-color: #bda;
+  transform: translateY(-50%) rotate(45deg);
+  z-index: 10;
+}

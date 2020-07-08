@@ -1,0 +1,43 @@
+.UsersList {
+  display: flex;
+  flex-direction: column;
+  border: 2px solid #8179cc;
+  height: 100%;
+}
+
+.UsersList__Title {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 50px;
+  margin: 0;
+  background-color: #8179cc;
+  color: #fff;
+  font-weight: 700;
+  letter-spacing: 1px;
+}
+
+.UsersList__Title_GreenCircle {
+  width: 12px;
+  height: 12px;
+  margin-left: 10px;
+  background-color: greenyellow;
+  border-radius: 50%;
+}
+
+.UsersList__Users {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  box-sizing: border-box;
+  padding: 8px;
+  background-color: #ddd;
+  color: #000;
+  font-weight: 700;
+  overflow: auto;
+}
+
+.UsersList__User {
+  font-size: 15px;
+  margin-bottom: 8px;
+}

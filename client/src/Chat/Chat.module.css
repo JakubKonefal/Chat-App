@@ -1,0 +1,72 @@
+.Chat {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  justify-content: center;
+  position: relative;
+  width: 35%;
+  height: 80%;
+  border: 1px solid #8179cc;
+  background-color: #fff;
+}
+
+.Chat__Topbar {
+  display: flex;
+  align-items: center;
+  height: 50px;
+  padding: 12px;
+  background-color: #8179cc;
+  color: #fff;
+}
+
+.Chat__Username {
+  font-size: 18px;
+}
+
+.Chat__RefreshIcon {
+  margin-left: auto;
+  font-size: 24px;
+  cursor: pointer;
+}
+
+.Chat__Messages {
+  height: 100%;
+  box-sizing: border-box;
+  padding: 25px;
+  background-color: #ddd;
+  overflow: auto;
+}
+
+.Chat__BottomPanel {
+  display: flex;
+  align-items: center;
+  height: 65px;
+}
+
+.Chat__Input {
+  width: 85%;
+  height: 100%;
+  border-radius: 0;
+}
+
+.Chat__SendButton {
+  width: 15%;
+  height: 100%;
+  border-radius: 0;
+}
+
+.Chat__OnlineUsers {
+  position: absolute;
+  top: 0;
+  right: -325px;
+  width: 275px;
+  height: 47.5%;
+}
+
+.Chat__Notifications {
+  position: absolute;
+  top: 50%;
+  right: -325px;
+  width: 275px;
+  height: 50%;
+}
