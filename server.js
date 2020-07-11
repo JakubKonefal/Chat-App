@@ -10,7 +10,7 @@ const allUsers = [];
 io.on("connect", (socket) => {
   const username = socket.handshake.query.username;
 
-  allUsers.push(username);
+  allUsers.push({ username: username, socketID: socket.id });
 
   socket.emit("user-connected", {
     socketID: socket.id,
@@ -27,6 +27,8 @@ io.on("connect", (socket) => {
       disconnectedUser: username,
     });
   });
+
+  console.log(allUsers);
 });
 
 server.listen(8000, () => {

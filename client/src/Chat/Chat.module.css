@@ -30,6 +30,7 @@
 }
 
 .Chat__Messages {
+  position: relative;
   height: 100%;
   box-sizing: border-box;
   padding: 25px;
@@ -40,6 +41,7 @@
 .Chat__BottomPanel {
   display: flex;
   align-items: center;
+
   height: 65px;
 }
 
@@ -47,6 +49,41 @@
   width: 85%;
   height: 100%;
   border-radius: 0;
+}
+
+.Chat__BottomPanelIcons {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 8px;
+}
+
+.Chat__EmojiIcon {
+  margin-right: 10px;
+  cursor: pointer;
+}
+
+.Chat__EmojiIcon:hover {
+  transform: scale(1.15);
+}
+
+.Chat__EmojiPicker {
+  position: absolute;
+  top: 50%;
+  right: 0;
+  z-index: 100;
+}
+
+.Chat__EmojiPicker_Hidden {
+  display: none;
+}
+
+.Chat__ImageIcon {
+  cursor: pointer;
+}
+
+.Chat__ImageIcon:hover {
+  transform: scale(1.15);
 }
 
 .Chat__SendButton {

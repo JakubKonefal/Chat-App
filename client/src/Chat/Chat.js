@@ -4,18 +4,20 @@ import io from "socket.io-client";
 import ChatMessage from "./ChatMessage";
 import OnlineUsersBox from "./OnlineUsersBox";
 import NotificationsBox from "./NotificationsBox";
-import { ArrowClockwise } from "react-bootstrap-icons";
+import Picker from "emoji-picker-react";
+import { ArrowClockwise, Image, EmojiNeutral } from "react-bootstrap-icons";
 import { Form, Button } from "react-bootstrap";
 
 const Chat = ({ location }) => {
   const timeOfJoiningChat = new Date().toLocaleTimeString();
   const [onlineUsers, setOnlineUsers] = useState([]);
-  const [socketId, setSocketId] = useState();
+  const [socketID, setSocketID] = useState();
   const [messages, setMessages] = useState([
     { body: "Welcome to chat!", time: timeOfJoiningChat },
   ]);
   const [notificationMessages, setNotificationMessages] = useState([]);
   const [message, setMessage] = useState("");
+  const [emojiPickerVisible, setEmojiPickerVisible] = useState(false);
 
   const socketRef = useRef();
 
@@ -27,13 +29,13 @@ const Chat = ({ location }) => {
     });
 
     socketRef.current.on("user-connected", ({ socketID, users }) => {
-      setSocketId(socketID);
+      setSocketID(socketID);
       setOnlineUsers(users);
     });
 
     socketRef.current.on("new-user-connected", (updatedUsers) => {
       const messageObj = {
-        username: `${[...updatedUsers].pop()}`,
+        username: `${[...updatedUsers].pop().username}`,
         event: "connected",
       };
       setNotificationMessages((oldMessages) => [...oldMessages, messageObj]);
@@ -70,7 +72,7 @@ const Chat = ({ location }) => {
 
     const messageObj = {
       body: message,
-      id: socketId,
+      id: socketID,
       username: location.state.name,
       time: timeOfSendingMessage,
     };
@@ -92,6 +94,14 @@ const Chat = ({ location }) => {
     setNotificationMessages([]);
   };
 
+  const appendEmojiToMessage = (event, emojiObject) => {
+    setMessage((message) => `${message}${emojiObject.emoji}`);
+  };
+
+  const toggleEmojiPicker = () => {
+    setEmojiPickerVisible(!emojiPickerVisible);
+  };
+
   return (
     <div className={classes.Chat}>
       <div className={classes.Chat__Topbar}>
@@ -109,10 +119,23 @@ const Chat = ({ location }) => {
               message={message.body}
               username={message.username}
               time={message.time}
-              myMessage={message.id === socketId}
+              myMessage={message.id === socketID}
             />
           );
         })}
+        <div
+          className={
+            emojiPickerVisible
+              ? classes.Chat__EmojiPicker
+              : classes.Chat__EmojiPicker_Hidden
+          }
+        >
+          <Picker
+            disableSearchBar
+            disableSkinTonePicker
+            onEmojiClick={appendEmojiToMessage}
+          />
+        </div>
       </div>
       <Form
         className={classes.Chat__BottomPanel}
@@ -126,13 +149,22 @@ const Chat = ({ location }) => {
           value={message}
           maxLength="250"
         />
+        <div className={classes.Chat__BottomPanelIcons}>
+          <EmojiNeutral
+            className={classes.Chat__EmojiIcon}
+            onClick={toggleEmojiPicker}
+          />
+          <Image className={classes.Chat__ImageIcon} />
+        </div>
+
         <Button className={classes.Chat__SendButton} type="submit">
           {" "}
           Send{" "}
         </Button>
       </Form>
+
       <div className={classes.Chat__OnlineUsers}>
-        <OnlineUsersBox users={onlineUsers} />
+        <OnlineUsersBox users={onlineUsers} mySocketID={socketID} />
       </div>
       <div className={classes.Chat__Notifications}>
         <NotificationsBox
