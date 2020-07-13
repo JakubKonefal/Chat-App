@@ -3,8 +3,6 @@ import classes from "./NotificationsBox.module.css";
 import { ArrowClockwise } from "react-bootstrap-icons";
 
 const NotificationsBox = ({ messages, refresh }) => {
-  console.log(messages);
-
   return (
     <div className={classes.Notifications}>
       <h5 className={classes.Notifications__Title}>

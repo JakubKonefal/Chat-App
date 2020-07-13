@@ -9,11 +9,10 @@ import { ArrowClockwise, Image, EmojiNeutral } from "react-bootstrap-icons";
 import { Form, Button } from "react-bootstrap";
 
 const Chat = ({ location }) => {
-  const timeOfJoiningChat = new Date().toLocaleTimeString();
   const [onlineUsers, setOnlineUsers] = useState([]);
   const [socketID, setSocketID] = useState();
   const [messages, setMessages] = useState([
-    { body: "Welcome to chat!", time: timeOfJoiningChat },
+    { body: "Welcome to chat!", time: getCurrentTime() },
   ]);
   const [notificationMessages, setNotificationMessages] = useState([]);
   const [message, setMessage] = useState("");
@@ -22,6 +21,10 @@ const Chat = ({ location }) => {
   const socketRef = useRef();
 
   useEffect(() => {
+    setSocketListeners();
+  }, [location.state.name]);
+
+  const setSocketListeners = () => {
     socketRef.current = io.connect("/", {
       query: {
         username: location.state.name,
@@ -56,7 +59,7 @@ const Chat = ({ location }) => {
         ]);
       }
     );
-  }, [location.state.name]);
+  };
 
   const receiveMessage = (message) => {
     setMessages((oldMessages) => [...oldMessages, message]);
@@ -86,21 +89,24 @@ const Chat = ({ location }) => {
   };
 
   const refreshMessagesBox = () => {
-    const timeOfRefreshing = new Date().toLocaleTimeString();
-    setMessages([{ body: "Welcome to chat!", time: timeOfRefreshing }]);
+    setMessages([{ body: "Welcome to chat!", time: getCurrentTime() }]);
   };
 
   const refreshNotificationsBox = () => {
     setNotificationMessages([]);
   };
 
-  const appendEmojiToMessage = (event, emojiObject) => {
+  const appendEmojiToMessage = (e, emojiObject) => {
     setMessage((message) => `${message}${emojiObject.emoji}`);
   };
 
   const toggleEmojiPicker = () => {
     setEmojiPickerVisible(!emojiPickerVisible);
   };
+
+  function getCurrentTime() {
+    return new Date().toLocaleTimeString();
+  }
 
   return (
     <div className={classes.Chat}>
@@ -137,15 +143,12 @@ const Chat = ({ location }) => {
           />
         </div>
       </div>
-      <Form
-        className={classes.Chat__BottomPanel}
-        onSubmit={(event) => sendMessage(event)}
-      >
+      <Form className={classes.Chat__BottomPanel} onSubmit={sendMessage}>
         <Form.Control
           className={classes.Chat__Input}
           type="text"
           placeholder="Type something..."
-          onChange={(event) => handleInputChange(event)}
+          onChange={handleInputChange}
           value={message}
           maxLength="250"
         />
