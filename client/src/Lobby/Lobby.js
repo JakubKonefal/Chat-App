@@ -26,6 +26,7 @@ const Lobby = () => {
           <Form.Control
             type="text"
             value={name}
+            name="name"
             onChange={handleInputChange}
             maxLength="20"
             required

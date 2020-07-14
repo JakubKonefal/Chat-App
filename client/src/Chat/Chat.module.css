@@ -74,11 +74,37 @@
   z-index: 100;
 }
 
-.Chat__EmojiPicker_Hidden {
+.Hidden {
   display: none;
 }
 
+.Chat__PreviewFileBox {
+  position: absolute;
+  bottom: 15px;
+  left: 15px;
+  z-index: 100;
+}
+
+.Chat__PreviewFileCancelBtn {
+  position: absolute;
+  top: -30px;
+  right: -30px;
+  font-size: 25px;
+  color: red;
+  cursor: pointer;
+}
+
+.Chat__PreviewFileCancelBtn:hover {
+  transform: scale(1.15);
+}
+
+.Chat__PreviewFile {
+  max-width: 300px;
+  max-height: 450px;
+}
+
 .Chat__ImageIcon {
+  margin: 0;
   cursor: pointer;
 }
 
@@ -106,4 +132,8 @@
   right: -325px;
   width: 275px;
   height: 50%;
+}
+
+input[type="file"] {
+  display: none;
 }

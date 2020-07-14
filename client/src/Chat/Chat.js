@@ -5,7 +5,7 @@ import ChatMessage from "./ChatMessage";
 import OnlineUsersBox from "./OnlineUsersBox";
 import NotificationsBox from "./NotificationsBox";
 import Picker from "emoji-picker-react";
-import { ArrowClockwise, Image, EmojiNeutral } from "react-bootstrap-icons";
+import { ArrowClockwise, Image, EmojiSmile, X } from "react-bootstrap-icons";
 import { Form, Button } from "react-bootstrap";
 
 const Chat = ({ location }) => {
@@ -17,6 +17,7 @@ const Chat = ({ location }) => {
   const [notificationMessages, setNotificationMessages] = useState([]);
   const [message, setMessage] = useState("");
   const [emojiPickerVisible, setEmojiPickerVisible] = useState(false);
+  const [chosenImage, setChosenImage] = useState(null);
 
   const socketRef = useRef();
 
@@ -67,7 +68,7 @@ const Chat = ({ location }) => {
 
   const sendMessage = (e) => {
     e.preventDefault();
-    if (!message) {
+    if (!message && !chosenImage) {
       return;
     }
 
@@ -75,17 +76,27 @@ const Chat = ({ location }) => {
 
     const messageObj = {
       body: message,
+      image: chosenImage,
       id: socketID,
       username: location.state.name,
       time: timeOfSendingMessage,
     };
     socketRef.current.emit("send-message", messageObj);
     setMessage("");
+    setChosenImage(null);
     setMessages((oldMessages) => [...oldMessages, messageObj]);
   };
 
   const handleInputChange = ({ target }) => {
     setMessage(target.value);
+  };
+
+  const handleImageSelect = (e) => {
+    setChosenImage(URL.createObjectURL(e.target.files[0]));
+  };
+
+  const cancelImageSelect = () => {
+    setChosenImage(null);
   };
 
   const refreshMessagesBox = () => {
@@ -123,6 +134,7 @@ const Chat = ({ location }) => {
             <ChatMessage
               key={index}
               message={message.body}
+              image={message.image}
               username={message.username}
               time={message.time}
               myMessage={message.id === socketID}
@@ -131,9 +143,7 @@ const Chat = ({ location }) => {
         })}
         <div
           className={
-            emojiPickerVisible
-              ? classes.Chat__EmojiPicker
-              : classes.Chat__EmojiPicker_Hidden
+            emojiPickerVisible ? classes.Chat__EmojiPicker : classes.Hidden
           }
         >
           <Picker
@@ -141,6 +151,17 @@ const Chat = ({ location }) => {
             disableSkinTonePicker
             onEmojiClick={appendEmojiToMessage}
           />
+        </div>
+        <div
+          className={
+            chosenImage ? classes.Chat__PreviewFileBox : classes.Hidden
+          }
+        >
+          <X
+            className={classes.Chat__PreviewFileCancelBtn}
+            onClick={cancelImageSelect}
+          />
+          <img className={classes.Chat__PreviewFile} src={chosenImage} />
         </div>
       </div>
       <Form className={classes.Chat__BottomPanel} onSubmit={sendMessage}>
@@ -153,11 +174,20 @@ const Chat = ({ location }) => {
           maxLength="250"
         />
         <div className={classes.Chat__BottomPanelIcons}>
-          <EmojiNeutral
+          <EmojiSmile
             className={classes.Chat__EmojiIcon}
             onClick={toggleEmojiPicker}
           />
-          <Image className={classes.Chat__ImageIcon} />
+          <input
+            type="file"
+            id="image"
+            name="image"
+            onChange={handleImageSelect}
+          />
+          <label className={classes.Chat__ImageIcon} htmlFor="image">
+            {" "}
+            <Image />{" "}
+          </label>
         </div>
 
         <Button className={classes.Chat__SendButton} type="submit">
