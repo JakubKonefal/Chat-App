@@ -1,3 +1,5 @@
+@import url("../config/main-colors.css");
+
 .Chat {
   display: flex;
   flex-direction: column;
@@ -6,7 +8,7 @@
   position: relative;
   width: 35%;
   height: 80%;
-  border: 1px solid #8179cc;
+  border: 1px solid var(--main-color);
   background-color: #fff;
 }
 
@@ -15,12 +17,27 @@
   align-items: center;
   height: 50px;
   padding: 12px;
-  background-color: #8179cc;
+  background-color: var(--main-color);
   color: #fff;
 }
 
 .Chat__Username {
   font-size: 18px;
+}
+
+.Chat__SelectButton {
+  padding: 4px 8px;
+  background-color: transparent;
+  color: #fff;
+  font-size: 20px;
+  border: none;
+  letter-spacing: 1px;
+}
+
+.Chat__SelectOption {
+  padding: 4px 8px;
+  border: none;
+  outline: none;
 }
 
 .Chat__RefreshIcon {
@@ -34,7 +51,7 @@
   height: 100%;
   box-sizing: border-box;
   padding: 25px;
-  background-color: #ddd;
+  background-color: var(--box-background);
   overflow: auto;
 }
 
@@ -65,6 +82,13 @@
 
 .Chat__EmojiIcon:hover {
   transform: scale(1.15);
+}
+
+.Chat__EmojiIcon_disabled {
+  margin-right: 10px;
+  color: #999;
+  cursor: default;
+  pointer-events: none;
 }
 
 .Chat__EmojiPicker {
@@ -100,7 +124,7 @@
 
 .Chat__PreviewFile {
   max-width: 300px;
-  max-height: 450px;
+  max-height: 200px;
 }
 
 .Chat__ImageIcon {
@@ -136,4 +160,10 @@
 
 input[type="file"] {
   display: none;
+}
+
+.Chat__PrivateChatWindow {
+  position: absolute;
+  left: -200px;
+  top: 0;
 }

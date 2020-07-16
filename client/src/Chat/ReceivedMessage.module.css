@@ -29,11 +29,16 @@
   white-space: nowrap;
 }
 
-.Message__Content {
+.Message__Content_Text {
   margin: 0;
   font-size: 15px;
   color: black;
   z-index: 100;
+}
+
+.Message__Content_Img {
+  max-width: 300px;
+  max-height: 200px;
 }
 
 .Message__Time {

@@ -4,8 +4,11 @@ import { Collapse } from "react-bootstrap";
 
 const ReceivedMessage = ({ message, image, time, username }) => {
   const [timeVisible, setTimeVisible] = useState(false);
-  console.log(message);
-  const msgimg = image ? <img src={image} width="200" /> : null;
+  const messsageContent = image ? (
+    <img className={classes.Message__Content_Img} src={image} alt="sent-file" />
+  ) : (
+    <p className={classes.Message__Content_Text}> {message} </p>
+  );
 
   return (
     <div
@@ -13,10 +16,7 @@ const ReceivedMessage = ({ message, image, time, username }) => {
       onClick={() => setTimeVisible(!timeVisible)}
     >
       <span className={classes.Message__Username}> {username} </span>
-      <p className={classes.Message__Content}>
-        {" "}
-        {message} {msgimg}{" "}
-      </p>
+      {messsageContent}
       <Collapse in={timeVisible}>
         <span className={classes.Message__Time}>{time}</span>
       </Collapse>

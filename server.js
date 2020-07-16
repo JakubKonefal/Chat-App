@@ -20,8 +20,18 @@ io.on("connect", (socket) => {
   socket.on("send-message", (body) => {
     socket.broadcast.emit("receive-message", body);
   });
+
+  socket.on("send-private-message", (messageObj) => {
+    socket.broadcast
+      .to(messageObj.receiver)
+      .emit("receive-private-message", messageObj);
+  });
+
   socket.on("disconnect", () => {
-    allUsers.splice(0, 1);
+    const indexOfDisconnectedUser = allUsers.findIndex(
+      (user) => user.socketID === socket.id
+    );
+    allUsers.splice(indexOfDisconnectedUser, 1);
     socket.broadcast.emit("user-disconnected", {
       updatedUsers: allUsers,
       disconnectedUser: username,

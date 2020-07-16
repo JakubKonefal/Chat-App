@@ -1,6 +1,8 @@
 .Message {
   display: flex;
   flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
   position: relative;
   width: 80%;
   margin-left: auto;
@@ -19,11 +21,16 @@
   background-color: rgb(154, 216, 123);
 }
 
-.Message__Content {
+.Message__Content_Text {
   margin: 0;
   font-size: 15px;
   color: black;
   z-index: 100;
+}
+
+.Message__Content_Img {
+  max-width: 300px;
+  max-height: 200px;
 }
 
 .Message__Time {

@@ -1,3 +1,5 @@
+@import url("../config/main-colors.css");
+
 .Lobby__Window {
   display: flex;
   flex-direction: column;
@@ -15,8 +17,8 @@
   padding: 10px 0;
   border-top-left-radius: 20px;
   border-top-right-radius: 20px;
-  background-color: #8179cc;
-  color: white;
+  background-color: var(--main-color);
+  color: #fff;
   text-align: center;
   letter-spacing: 1px;
 }
@@ -45,7 +47,7 @@
   margin-bottom: 50px;
   font-size: 28px;
   font-weight: 700;
-  color: #8179cc;
+  color: var(--main-color);
   text-align: center;
   text-transform: uppercase;
 }
@@ -62,7 +64,7 @@
   width: 30%;
   margin-top: 24px;
   padding: 5px 7px;
-  background-color: #8179cc;
+  background-color: var(--main-color);
   border: none;
   border-radius: 10px;
   color: #fff;

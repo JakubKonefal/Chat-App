@@ -5,15 +5,20 @@ import ChatMessage from "./ChatMessage";
 import OnlineUsersBox from "./OnlineUsersBox";
 import NotificationsBox from "./NotificationsBox";
 import Picker from "emoji-picker-react";
+import { DropdownButton, Dropdown } from "react-bootstrap";
+import { getCurrentTime } from "../utils/utils";
 import { ArrowClockwise, Image, EmojiSmile, X } from "react-bootstrap-icons";
 import { Form, Button } from "react-bootstrap";
 
 const Chat = ({ location }) => {
   const [onlineUsers, setOnlineUsers] = useState([]);
   const [socketID, setSocketID] = useState();
-  const [messages, setMessages] = useState([
-    { body: "Welcome to chat!", time: getCurrentTime() },
-  ]);
+  const [currentRoom, setCurrentRoom] = useState({ roomName: "General" });
+  const [messages, setMessages] = useState({
+    General: {
+      messages: [{ body: "Welcome to chat!" }],
+    },
+  });
   const [notificationMessages, setNotificationMessages] = useState([]);
   const [message, setMessage] = useState("");
   const [emojiPickerVisible, setEmojiPickerVisible] = useState(false);
@@ -50,6 +55,10 @@ const Chat = ({ location }) => {
       receiveMessage(message);
     });
 
+    socketRef.current.on("receive-private-message", (message) => {
+      receiveMessage(message, true);
+    });
+
     socketRef.current.on(
       "user-disconnected",
       ({ updatedUsers, disconnectedUser }) => {
@@ -62,8 +71,38 @@ const Chat = ({ location }) => {
     );
   };
 
-  const receiveMessage = (message) => {
-    setMessages((oldMessages) => [...oldMessages, message]);
+  const receiveMessage = (message, privateMessage) => {
+    if (privateMessage) {
+      setMessages((oldMessages) => {
+        if (oldMessages[message.username]) {
+          const updatedMessages = {
+            ...oldMessages,
+            [message.username]: {
+              messages: [...oldMessages[message.username].messages, message],
+            },
+          };
+          return updatedMessages;
+        } else {
+          const updatedMessages2 = {
+            ...oldMessages,
+            [message.username]: {
+              messages: [message],
+            },
+          };
+          return updatedMessages2;
+        }
+      });
+    } else {
+      setMessages((oldMessages) => {
+        const updatedMessages = {
+          oldMessages,
+          [currentRoom.roomName]: {
+            messages: [...oldMessages[currentRoom.roomName].messages, message],
+          },
+        };
+        return updatedMessages;
+      });
+    }
   };
 
   const sendMessage = (e) => {
@@ -72,27 +111,66 @@ const Chat = ({ location }) => {
       return;
     }
 
-    const timeOfSendingMessage = new Date().toLocaleTimeString();
-
+    const timeOfSendingMessage = getCurrentTime();
     const messageObj = {
+      receiver: currentRoom.socketID,
       body: message,
       image: chosenImage,
       id: socketID,
       username: location.state.name,
       time: timeOfSendingMessage,
     };
-    socketRef.current.emit("send-message", messageObj);
-    setMessage("");
+    if (currentRoom.roomName === "General") {
+      socketRef.current.emit("send-message", messageObj);
+    } else {
+      socketRef.current.emit("send-private-message", messageObj);
+    }
+
+    clearMessageInput();
     setChosenImage(null);
-    setMessages((oldMessages) => [...oldMessages, messageObj]);
+    setEmojiPickerVisible(false);
+    setMessages((oldMessages) => {
+      if (oldMessages[currentRoom.roomName]) {
+        const updatedMessages = {
+          oldMessages,
+          [currentRoom.roomName]: {
+            messages: [
+              ...oldMessages[currentRoom.roomName].messages,
+              messageObj,
+            ],
+          },
+        };
+        return updatedMessages;
+      } else {
+        const updatedMessages2 = {
+          ...oldMessages,
+          [currentRoom.roomName]: {
+            messages: [messageObj],
+          },
+        };
+        return updatedMessages2;
+      }
+    });
   };
 
   const handleInputChange = ({ target }) => {
     setMessage(target.value);
   };
 
+  const handleRoomSelect = (eventKey, event) => {
+    const roomObj = {
+      roomName: eventKey,
+      socketID: event.target.id,
+    };
+    setCurrentRoom(roomObj);
+
+    console.log(roomObj);
+  };
+
   const handleImageSelect = (e) => {
     setChosenImage(URL.createObjectURL(e.target.files[0]));
+    clearMessageInput();
+    setEmojiPickerVisible(false);
   };
 
   const cancelImageSelect = () => {
@@ -115,32 +193,57 @@ const Chat = ({ location }) => {
     setEmojiPickerVisible(!emojiPickerVisible);
   };
 
-  function getCurrentTime() {
-    return new Date().toLocaleTimeString();
-  }
+  const clearMessageInput = () => {
+    setMessage("");
+  };
 
   return (
     <div className={classes.Chat}>
       <div className={classes.Chat__Topbar}>
-        <span className={classes.Chat__Username}>{location.state.name}</span>
+        <DropdownButton
+          bsPrefix={classes.Chat__SelectButton}
+          variant="none"
+          onSelect={handleRoomSelect}
+          title={currentRoom.roomName}
+        >
+          <Dropdown.Item key="General" eventKey="General">
+            General chat
+          </Dropdown.Item>
+          {onlineUsers.map((user) => {
+            if (user.socketID !== socketID) {
+              return (
+                <Dropdown.Item
+                  key={user.socketID}
+                  id={user.socketID}
+                  eventKey={user.username}
+                >
+                  {user.username}
+                </Dropdown.Item>
+              );
+            }
+          })}
+        </DropdownButton>
         <ArrowClockwise
           className={classes.Chat__RefreshIcon}
           onClick={refreshMessagesBox}
         />
       </div>
       <div className={classes.Chat__Messages}>
-        {messages.map((message, index) => {
-          return (
-            <ChatMessage
-              key={index}
-              message={message.body}
-              image={message.image}
-              username={message.username}
-              time={message.time}
-              myMessage={message.id === socketID}
-            />
-          );
-        })}
+        {console.log(messages)}
+        {messages[currentRoom.roomName]
+          ? messages[currentRoom.roomName].messages.map((message, index) => {
+              return (
+                <ChatMessage
+                  key={index}
+                  message={message.body}
+                  image={message.image}
+                  username={message.username}
+                  time={message.time}
+                  myMessage={message.id === socketID}
+                />
+              );
+            })
+          : null}
         <div
           className={
             emojiPickerVisible ? classes.Chat__EmojiPicker : classes.Hidden
@@ -161,9 +264,14 @@ const Chat = ({ location }) => {
             className={classes.Chat__PreviewFileCancelBtn}
             onClick={cancelImageSelect}
           />
-          <img className={classes.Chat__PreviewFile} src={chosenImage} />
+          <img
+            className={classes.Chat__PreviewFile}
+            src={chosenImage}
+            alt="preview-file"
+          />
         </div>
       </div>
+
       <Form className={classes.Chat__BottomPanel} onSubmit={sendMessage}>
         <Form.Control
           className={classes.Chat__Input}
@@ -171,14 +279,19 @@ const Chat = ({ location }) => {
           placeholder="Type something..."
           onChange={handleInputChange}
           value={message}
+          disabled={chosenImage}
           maxLength="250"
         />
         <div className={classes.Chat__BottomPanelIcons}>
           <EmojiSmile
-            className={classes.Chat__EmojiIcon}
+            className={
+              chosenImage
+                ? classes.Chat__EmojiIcon_disabled
+                : classes.Chat__EmojiIcon
+            }
             onClick={toggleEmojiPicker}
           />
-          <input
+          <Form.Control
             type="file"
             id="image"
             name="image"

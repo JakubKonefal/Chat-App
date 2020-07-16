@@ -1,7 +1,9 @@
+@import url("../config/main-colors.css");
+
 .Notifications {
   display: flex;
   flex-direction: column;
-  border: 2px solid #8179cc;
+  border: 2px solid var(--main-color);
   height: 100%;
 }
 
@@ -11,7 +13,7 @@
   justify-content: center;
   height: 50px;
   margin: 0;
-  background-color: #8179cc;
+  background-color: var(--main-color);
   color: #fff;
   font-weight: 700;
   letter-spacing: 1px;
@@ -24,7 +26,7 @@
 
 .Notifications__Messages {
   height: 100%;
-  background-color: #ddd;
+  background-color: var(--box-background);
   overflow: auto;
 }
 

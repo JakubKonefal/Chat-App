@@ -11,7 +11,7 @@ const OnlineUsersList = ({ users, mySocketID }) => {
       <span
         className={userClassName}
         key={user.socketID}
-        socketID={user.socketID}
+        socketid={user.socketID}
       >
         {`${index + 1}. ${user.username}`}
       </span>
