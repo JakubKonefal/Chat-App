@@ -56,7 +56,7 @@ const Chat = ({ location }) => {
     });
 
     socketRef.current.on("receive-private-message", (message) => {
-      receiveMessage(message, true);
+      receivePrivateMessage(message);
     });
 
     socketRef.current.on(
@@ -71,38 +71,12 @@ const Chat = ({ location }) => {
     );
   };
 
-  const receiveMessage = (message, privateMessage) => {
-    if (privateMessage) {
-      setMessages((oldMessages) => {
-        if (oldMessages[message.username]) {
-          const updatedMessages = {
-            ...oldMessages,
-            [message.username]: {
-              messages: [...oldMessages[message.username].messages, message],
-            },
-          };
-          return updatedMessages;
-        } else {
-          const updatedMessages2 = {
-            ...oldMessages,
-            [message.username]: {
-              messages: [message],
-            },
-          };
-          return updatedMessages2;
-        }
-      });
-    } else {
-      setMessages((oldMessages) => {
-        const updatedMessages = {
-          oldMessages,
-          [currentRoom.roomName]: {
-            messages: [...oldMessages[currentRoom.roomName].messages, message],
-          },
-        };
-        return updatedMessages;
-      });
-    }
+  const handleRoomSelect = (roomName, event) => {
+    const roomObj = {
+      roomName,
+      socketID: event.target.id,
+    };
+    setCurrentRoom(roomObj);
   };
 
   const sendMessage = (e) => {
@@ -113,63 +87,75 @@ const Chat = ({ location }) => {
 
     const timeOfSendingMessage = getCurrentTime();
     const messageObj = {
-      receiver: currentRoom.socketID,
+      receiverID: currentRoom.socketID,
       body: message,
       image: chosenImage,
-      id: socketID,
-      username: location.state.name,
+      senderID: socketID,
+      sender: location.state.name,
       time: timeOfSendingMessage,
     };
-    if (currentRoom.roomName === "General") {
-      socketRef.current.emit("send-message", messageObj);
-    } else {
-      socketRef.current.emit("send-private-message", messageObj);
-    }
 
-    clearMessageInput();
+    currentRoom.roomName === "General"
+      ? socketRef.current.emit("send-message", messageObj)
+      : socketRef.current.emit("send-private-message", messageObj);
+
+    setMessages((oldMessages) =>
+      oldMessages[currentRoom.roomName]
+        ? {
+            ...oldMessages,
+            [currentRoom.roomName]: {
+              messages: [
+                ...oldMessages[currentRoom.roomName].messages,
+                messageObj,
+              ],
+            },
+          }
+        : {
+            ...oldMessages,
+            [currentRoom.roomName]: {
+              messages: [messageObj],
+            },
+          }
+    );
+    setMessage("");
     setChosenImage(null);
     setEmojiPickerVisible(false);
-    setMessages((oldMessages) => {
-      if (oldMessages[currentRoom.roomName]) {
-        const updatedMessages = {
-          oldMessages,
-          [currentRoom.roomName]: {
-            messages: [
-              ...oldMessages[currentRoom.roomName].messages,
-              messageObj,
-            ],
-          },
-        };
-        return updatedMessages;
-      } else {
-        const updatedMessages2 = {
-          ...oldMessages,
-          [currentRoom.roomName]: {
-            messages: [messageObj],
-          },
-        };
-        return updatedMessages2;
-      }
-    });
+  };
+
+  const receiveMessage = (message) => {
+    setMessages((oldMessages) => ({
+      ...oldMessages,
+      [currentRoom.roomName]: {
+        messages: [...oldMessages[currentRoom.roomName].messages, message],
+      },
+    }));
+  };
+
+  const receivePrivateMessage = (message) => {
+    setMessages((oldMessages) =>
+      oldMessages[message.sender]
+        ? {
+            ...oldMessages,
+            [message.sender]: {
+              messages: [...oldMessages[message.sender].messages, message],
+            },
+          }
+        : {
+            ...oldMessages,
+            [message.sender]: {
+              messages: [message],
+            },
+          }
+    );
   };
 
   const handleInputChange = ({ target }) => {
     setMessage(target.value);
   };
 
-  const handleRoomSelect = (eventKey, event) => {
-    const roomObj = {
-      roomName: eventKey,
-      socketID: event.target.id,
-    };
-    setCurrentRoom(roomObj);
-
-    console.log(roomObj);
-  };
-
   const handleImageSelect = (e) => {
     setChosenImage(URL.createObjectURL(e.target.files[0]));
-    clearMessageInput();
+    setMessage("");
     setEmojiPickerVisible(false);
   };
 
@@ -185,16 +171,12 @@ const Chat = ({ location }) => {
     setNotificationMessages([]);
   };
 
-  const appendEmojiToMessage = (e, emojiObject) => {
-    setMessage((message) => `${message}${emojiObject.emoji}`);
-  };
-
   const toggleEmojiPicker = () => {
     setEmojiPickerVisible(!emojiPickerVisible);
   };
 
-  const clearMessageInput = () => {
-    setMessage("");
+  const appendEmojiToMessage = (e, emojiObj) => {
+    setMessage((message) => `${message}${emojiObj.emoji}`);
   };
 
   return (
@@ -237,9 +219,9 @@ const Chat = ({ location }) => {
                   key={index}
                   message={message.body}
                   image={message.image}
-                  username={message.username}
+                  username={message.sender}
                   time={message.time}
-                  myMessage={message.id === socketID}
+                  myMessage={message.senderID === socketID}
                 />
               );
             })

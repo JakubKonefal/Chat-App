@@ -10,20 +10,18 @@ const allUsers = [];
 io.on("connect", (socket) => {
   const username = socket.handshake.query.username;
 
-  allUsers.push({ username: username, socketID: socket.id });
-
   socket.emit("user-connected", {
     socketID: socket.id,
     users: allUsers,
   });
   socket.broadcast.emit("new-user-connected", allUsers);
-  socket.on("send-message", (body) => {
-    socket.broadcast.emit("receive-message", body);
+  socket.on("send-message", (messageObj) => {
+    socket.broadcast.emit("receive-message", messageObj);
   });
 
   socket.on("send-private-message", (messageObj) => {
     socket.broadcast
-      .to(messageObj.receiver)
+      .to(messageObj.receiverID)
       .emit("receive-private-message", messageObj);
   });
 
@@ -37,8 +35,6 @@ io.on("connect", (socket) => {
       disconnectedUser: username,
     });
   });
-
-  console.log(allUsers);
 });
 
 server.listen(8000, () => {
