@@ -7,7 +7,12 @@ const Lobby = () => {
   const [name, setName] = useState("");
   const history = useHistory();
   const joinChat = () => {
-    history.replace("/chat", { name: name });
+    const location = {
+      pathname: "/chat",
+      name: name,
+      fromLobby: true,
+    };
+    history.replace(location);
   };
 
   const handleInputChange = ({ target }) => {

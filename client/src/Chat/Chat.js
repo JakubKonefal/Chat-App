@@ -13,10 +13,13 @@ import { Form, Button } from "react-bootstrap";
 const Chat = ({ location }) => {
   const [onlineUsers, setOnlineUsers] = useState([]);
   const [socketID, setSocketID] = useState();
-  const [currentRoom, setCurrentRoom] = useState({ roomName: "General" });
+  const [currentRoom, setCurrentRoom] = useState({
+    roomName: "General",
+    roomID: "General",
+  });
   const [messages, setMessages] = useState({
     General: {
-      messages: [{ body: "Welcome to chat!" }],
+      messages: [{ body: "Welcome to chat!", time: getCurrentTime() }],
     },
   });
   const [notificationMessages, setNotificationMessages] = useState([]);
@@ -28,12 +31,12 @@ const Chat = ({ location }) => {
 
   useEffect(() => {
     setSocketListeners();
-  }, [location.state.name]);
+  }, [location.name]);
 
   const setSocketListeners = () => {
     socketRef.current = io.connect("/", {
       query: {
-        username: location.state.name,
+        username: location.name,
       },
     });
 
@@ -59,22 +62,20 @@ const Chat = ({ location }) => {
       receivePrivateMessage(message);
     });
 
-    socketRef.current.on(
-      "user-disconnected",
-      ({ updatedUsers, disconnectedUser }) => {
-        setOnlineUsers(updatedUsers);
-        setNotificationMessages((oldMessages) => [
-          ...oldMessages,
-          { username: `${disconnectedUser}`, event: "disconnected" },
-        ]);
-      }
-    );
+    socketRef.current.on("user-disconnected", ({ updatedUsers, username }) => {
+      setOnlineUsers(updatedUsers);
+      setNotificationMessages((oldMessages) => [
+        ...oldMessages,
+        { username: `${username}`, event: "disconnected" },
+      ]);
+      setCurrentRoom({ roomID: "General", roomName: "General" });
+    });
   };
 
   const handleRoomSelect = (roomName, event) => {
     const roomObj = {
       roomName,
-      socketID: event.target.id,
+      roomID: event.target.id,
     };
     setCurrentRoom(roomObj);
   };
@@ -87,11 +88,11 @@ const Chat = ({ location }) => {
 
     const timeOfSendingMessage = getCurrentTime();
     const messageObj = {
-      receiverID: currentRoom.socketID,
+      receiverID: currentRoom.roomID,
       body: message,
       image: chosenImage,
       senderID: socketID,
-      sender: location.state.name,
+      sender: location.name,
       time: timeOfSendingMessage,
     };
 
@@ -100,19 +101,19 @@ const Chat = ({ location }) => {
       : socketRef.current.emit("send-private-message", messageObj);
 
     setMessages((oldMessages) =>
-      oldMessages[currentRoom.roomName]
+      oldMessages[currentRoom.roomID]
         ? {
             ...oldMessages,
-            [currentRoom.roomName]: {
+            [currentRoom.roomID]: {
               messages: [
-                ...oldMessages[currentRoom.roomName].messages,
+                ...oldMessages[currentRoom.roomID].messages,
                 messageObj,
               ],
             },
           }
         : {
             ...oldMessages,
-            [currentRoom.roomName]: {
+            [currentRoom.roomID]: {
               messages: [messageObj],
             },
           }
@@ -125,24 +126,24 @@ const Chat = ({ location }) => {
   const receiveMessage = (message) => {
     setMessages((oldMessages) => ({
       ...oldMessages,
-      [currentRoom.roomName]: {
-        messages: [...oldMessages[currentRoom.roomName].messages, message],
+      [currentRoom.roomID]: {
+        messages: [...oldMessages[currentRoom.roomID].messages, message],
       },
     }));
   };
 
   const receivePrivateMessage = (message) => {
     setMessages((oldMessages) =>
-      oldMessages[message.sender]
+      oldMessages[message.senderID]
         ? {
             ...oldMessages,
-            [message.sender]: {
-              messages: [...oldMessages[message.sender].messages, message],
+            [message.senderID]: {
+              messages: [...oldMessages[message.senderID].messages, message],
             },
           }
         : {
             ...oldMessages,
-            [message.sender]: {
+            [message.senderID]: {
               messages: [message],
             },
           }
@@ -188,7 +189,7 @@ const Chat = ({ location }) => {
           onSelect={handleRoomSelect}
           title={currentRoom.roomName}
         >
-          <Dropdown.Item key="General" eventKey="General">
+          <Dropdown.Item key="General" id="General" eventKey="General">
             General chat
           </Dropdown.Item>
           {onlineUsers.map((user) => {
@@ -211,9 +212,8 @@ const Chat = ({ location }) => {
         />
       </div>
       <div className={classes.Chat__Messages}>
-        {console.log(messages)}
-        {messages[currentRoom.roomName]
-          ? messages[currentRoom.roomName].messages.map((message, index) => {
+        {messages[currentRoom.roomID]
+          ? messages[currentRoom.roomID].messages.map((message, index) => {
               return (
                 <ChatMessage
                   key={index}

@@ -9,6 +9,7 @@ const allUsers = [];
 
 io.on("connect", (socket) => {
   const username = socket.handshake.query.username;
+  allUsers.push({ username: username, socketID: socket.id });
 
   socket.emit("user-connected", {
     socketID: socket.id,
@@ -32,7 +33,7 @@ io.on("connect", (socket) => {
     allUsers.splice(indexOfDisconnectedUser, 1);
     socket.broadcast.emit("user-disconnected", {
       updatedUsers: allUsers,
-      disconnectedUser: username,
+      username: username,
     });
   });
 });
