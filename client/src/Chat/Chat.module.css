@@ -8,6 +8,7 @@
   position: relative;
   width: 35%;
   height: 80%;
+  min-height: 475px;
   border: 1px solid var(--main-color);
   background-color: #fff;
 }
@@ -166,4 +167,55 @@ input[type="file"] {
   position: absolute;
   left: -200px;
   top: 0;
+}
+
+@media (max-width: 1600px) {
+  .Chat {
+    margin-right: 10%;
+  }
+}
+
+@media (max-width: 1280px) {
+  .Chat {
+    width: 43%;
+  }
+
+  .Chat__OnlineUsers {
+    right: -275px;
+    width: 225px;
+  }
+
+  .Chat__Notifications {
+    right: -275px;
+    width: 225px;
+  }
+}
+
+@media (max-width: 1000px) {
+  .Chat {
+    width: 50%;
+    margin-right: 25%;
+  }
+}
+
+@media (max-width: 1024px) and (orientation: landscape) {
+  .Chat {
+    width: 50%;
+  }
+}
+
+@media (max-width: 896px) and (orientation: landscape) {
+  .Chat {
+    width: 100%;
+    margin: 0;
+    height: 100%;
+  }
+
+  .Chat__OnlineUsers {
+    display: none;
+  }
+
+  .Chat__Notifications {
+    display: none;
+  }
 }

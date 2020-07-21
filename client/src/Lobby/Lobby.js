@@ -1,9 +1,13 @@
 import React, { useState } from "react";
 import classes from "./Lobby.module.css";
 import { withRouter, useHistory } from "react-router";
-import { Form } from "react-bootstrap";
+import { Form, Modal } from "react-bootstrap";
+import { InfoCircleFill } from "react-bootstrap-icons";
 
-const Lobby = () => {
+const Lobby = ({ location }) => {
+  const [redirectedFromChat, setRedirectedFromChat] = useState(
+    location.state && location.state.redirected
+  );
   const [name, setName] = useState("");
   const history = useHistory();
   const joinChat = () => {
@@ -19,6 +23,10 @@ const Lobby = () => {
     setName(target.value);
   };
 
+  const handleModalClose = () => {
+    setRedirectedFromChat(false);
+  };
+
   return (
     <div className={classes.Lobby__Window}>
       <h1 className={classes.Lobby__Title}> Chat - App </h1>
@@ -29,6 +37,7 @@ const Lobby = () => {
             Enter your name:
           </Form.Label>
           <Form.Control
+            className={classes.Lobby__Input}
             type="text"
             value={name}
             name="name"
@@ -45,6 +54,12 @@ const Lobby = () => {
           </button>
         </Form>
       </div>
+      <Modal show={redirectedFromChat} onHide={handleModalClose} centered>
+        <Modal.Body className={classes.Lobby__Modal}>
+          <InfoCircleFill className={classes.Lobby__ModalIcon} />
+          You have been disconnected from the chat!
+        </Modal.Body>
+      </Modal>
     </div>
   );
 };

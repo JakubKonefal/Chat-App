@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import classes from "./Chat.module.css";
 import io from "socket.io-client";
+import { Redirect } from "react-router-dom";
 import ChatMessage from "./ChatMessage";
 import OnlineUsersBox from "./OnlineUsersBox";
 import NotificationsBox from "./NotificationsBox";
@@ -34,42 +35,47 @@ const Chat = ({ location }) => {
   }, [location.name]);
 
   const setSocketListeners = () => {
-    socketRef.current = io.connect("/", {
-      query: {
-        username: location.name,
-      },
-    });
+    if (location.fromLobby) {
+      socketRef.current = io.connect("/", {
+        query: {
+          username: location.name,
+        },
+      });
 
-    socketRef.current.on("user-connected", ({ socketID, users }) => {
-      setSocketID(socketID);
-      setOnlineUsers(users);
-    });
+      socketRef.current.on("user-connected", ({ socketID, users }) => {
+        setSocketID(socketID);
+        setOnlineUsers(users);
+      });
 
-    socketRef.current.on("new-user-connected", (updatedUsers) => {
-      const messageObj = {
-        username: `${[...updatedUsers].pop().username}`,
-        event: "connected",
-      };
-      setNotificationMessages((oldMessages) => [...oldMessages, messageObj]);
-      setOnlineUsers(updatedUsers);
-    });
+      socketRef.current.on("new-user-connected", (updatedUsers) => {
+        const messageObj = {
+          username: `${[...updatedUsers].pop().username}`,
+          event: "connected",
+        };
+        setNotificationMessages((oldMessages) => [...oldMessages, messageObj]);
+        setOnlineUsers(updatedUsers);
+      });
 
-    socketRef.current.on("receive-message", (message) => {
-      receiveMessage(message);
-    });
+      socketRef.current.on("receive-message", (message) => {
+        receiveMessage(message);
+      });
 
-    socketRef.current.on("receive-private-message", (message) => {
-      receivePrivateMessage(message);
-    });
+      socketRef.current.on("receive-private-message", (message) => {
+        receivePrivateMessage(message);
+      });
 
-    socketRef.current.on("user-disconnected", ({ updatedUsers, username }) => {
-      setOnlineUsers(updatedUsers);
-      setNotificationMessages((oldMessages) => [
-        ...oldMessages,
-        { username: `${username}`, event: "disconnected" },
-      ]);
-      setCurrentRoom({ roomID: "General", roomName: "General" });
-    });
+      socketRef.current.on(
+        "user-disconnected",
+        ({ updatedUsers, username }) => {
+          setOnlineUsers(updatedUsers);
+          setNotificationMessages((oldMessages) => [
+            ...oldMessages,
+            { username: `${username}`, event: "disconnected" },
+          ]);
+          setCurrentRoom({ roomID: "General", roomName: "General" });
+        }
+      );
+    }
   };
 
   const handleRoomSelect = (roomName, event) => {
@@ -179,6 +185,10 @@ const Chat = ({ location }) => {
   const appendEmojiToMessage = (e, emojiObj) => {
     setMessage((message) => `${message}${emojiObj.emoji}`);
   };
+
+  if (!location.fromLobby) {
+    return <Redirect to={{ pathname: "/", state: { redirected: true } }} />;
+  }
 
   return (
     <div className={classes.Chat}>

@@ -6,6 +6,7 @@
   align-items: center;
   width: 40%;
   height: 40%;
+  min-height: 350px;
   border-top-left-radius: 20px;
   border-top-right-radius: 20px;
   background-color: #fff;
@@ -29,6 +30,7 @@
   justify-content: space-between;
   width: 100%;
   height: 100%;
+
   box-sizing: border-box;
   padding: 15px;
 }
@@ -78,4 +80,147 @@
 
 .Lobby__Button:hover {
   background-color: #6057aa;
+}
+
+.Lobby__Modal {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  font-size: 18px;
+}
+
+.Lobby__ModalIcon {
+  margin-bottom: 15px;
+  font-size: 35px;
+  color: #7dccfc;
+}
+
+@media (max-width: 1600px) {
+  .Lobby__Window {
+    width: 45%;
+  }
+}
+
+@media (max-width: 1280px) {
+  .Lobby__Window {
+    width: 50%;
+  }
+}
+
+@media (max-width: 1000px) {
+  .Lobby__Window {
+    width: 60%;
+  }
+}
+
+@media (max-width: 896px) and (orientation: landscape) {
+  .Lobby__Window {
+    min-height: 275px;
+  }
+
+  .Lobby__Title {
+    font-size: 1.8rem;
+  }
+
+  .Lobby__FormTitle {
+    margin-bottom: 20px;
+    font-size: 22px;
+  }
+
+  .Lobby__InputLabel {
+    font-size: 16px;
+  }
+
+  .Lobby__Button {
+    margin-top: 15px;
+  }
+}
+
+@media (max-width: 667px) and (orientation: landscape) {
+  .Lobby__Window {
+    min-height: 225px;
+  }
+
+  .Lobby__Title {
+    font-size: 1.4rem;
+  }
+
+  .Lobby__FormTitle {
+    margin-bottom: 10px;
+    font-size: 18px;
+  }
+
+  .Lobby__Button {
+    padding: 2px 7px;
+  }
+}
+
+@media (max-width: 800px) and (orientation: portrait) {
+  .Lobby__Window {
+    height: 35%;
+  }
+
+  .Lobby__Title {
+    padding: 18px 0;
+  }
+
+  .Lobby__InputLabel {
+    font-size: 22px;
+  }
+
+  .Lobby__Input {
+    height: calc(2.5em + 0.75rem + 2px);
+    font-size: 18px;
+  }
+
+  .Lobby__Button {
+    width: 50%;
+    margin-top: 35px;
+    padding: 12px 7px;
+    font-size: 22px;
+    border-radius: 25px;
+  }
+}
+
+@media (max-width: 768px) and (orientation: portrait) {
+  .Lobby__Window {
+    height: 45%;
+  }
+}
+
+@media (max-width: 601px) and (orientation: portrait) {
+  .Lobby__Window {
+    width: 75%;
+  }
+}
+
+@media (max-width: 414px) and (orientation: portrait) {
+  .Lobby__Window {
+    height: 50%;
+    width: 85%;
+  }
+
+  .Lobby__Title {
+    font-size: 1.8rem;
+  }
+
+  .Lobby__FormTitle {
+    margin-bottom: 35px;
+    font-size: 24px;
+  }
+
+  .Lobby__InputLabel {
+    font-size: 18px;
+  }
+
+  .Lobby__Input {
+    height: calc(1.8em + 0.75rem + 2px);
+  }
+
+  .Lobby__Button {
+    padding: 5px 7px;
+    margin-top: 45px;
+  }
 }
