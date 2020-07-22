@@ -199,13 +199,19 @@ const Chat = ({ location }) => {
           onSelect={handleRoomSelect}
           title={currentRoom.roomName}
         >
-          <Dropdown.Item key="General" id="General" eventKey="General">
+          <Dropdown.Item
+            className={classes.Chat__DropdownItem}
+            key="General"
+            id="General"
+            eventKey="General"
+          >
             General chat
           </Dropdown.Item>
           {onlineUsers.map((user) => {
             if (user.socketID !== socketID) {
               return (
                 <Dropdown.Item
+                  className={classes.Chat__DropdownItem}
                   key={user.socketID}
                   id={user.socketID}
                   eventKey={user.username}

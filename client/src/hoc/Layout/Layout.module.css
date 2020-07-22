@@ -9,3 +9,9 @@
   background-position: center;
   background-size: cover;
 }
+
+@media (max-width: 800px) and (orientation: portrait) {
+  .Layout {
+    min-height: 0;
+  }
+}
